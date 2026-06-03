@@ -1,11 +1,11 @@
-# UP 2050 — Feature Ticket List & Sprint Board
+# UP 2050 — Feature Ticket List & Sprint Board (Python Stack)
 ## Hack2Skill × Google for Developers · 20 Tickets · 5 Epics · June 2026
 
 ---
 
 ## Sprint Overview
 
-All work executes in a **single 5-day sprint (03–07 June 2026)**. Tickets are organized into 5 epics.
+All work executes in a **single 5-day sprint (03–07 June 2026)**. Tickets organized into 5 epics.
 
 - **P0** tickets are blockers — nothing ships without them
 - **P1** tickets improve quality
@@ -24,7 +24,7 @@ All work executes in a **single 5-day sprint (03–07 June 2026)**. Tickets are 
 
 ## EPIC-1: Data & Research
 
-> Compile all data required for the poster's data visualizations. All sources must be credible (government / UN / World Bank). No made-up numbers.
+> Compile all data for poster visualizations. All sources must be credible (government / UN / World Bank). No made-up numbers.
 
 ---
 
@@ -39,10 +39,10 @@ All work executes in a **single 5-day sprint (03–07 June 2026)**. Tickets are 
 | **Dependencies** | — |
 
 **Description**
-Research NITI Aayog state vision docs, World Bank South Asia projections, and UP government budget documents. Extract GDP trajectory from 2024 to 2050. Store as `projections.json`.
+Research NITI Aayog state vision docs, World Bank South Asia projections, UP government budget documents. Extract GDP trajectory 2024–2050. Store as `data/projections.json`. Load via `pandas.read_json()` in `data_transform.py`.
 
 **Acceptance Criteria**
-JSON file exists at `src/data/projections.json` with GDP, urbanization, renewable energy, and literacy fields. All values sourced and noted.
+`data/projections.json` exists with GDP, urbanization, renewable energy, literacy fields. All values sourced. `data_transform.py` loads file without errors.
 
 ---
 
@@ -57,10 +57,10 @@ JSON file exists at `src/data/projections.json` with GDP, urbanization, renewabl
 | **Dependencies** | UP-001 |
 
 **Description**
-Collect UN World Population Prospects data for UP state (Uttar Pradesh proxy from India national split). Build male/female age-group breakdown for 2024 and 2050. Store as `demographics.json`.
+Collect UN World Population Prospects data for UP (India national split). Build male/female age-group breakdown for 2024 and 2050. Store as `data/demographics.json`. Load via `pandas` in `data_transform.py`.
 
 **Acceptance Criteria**
-`demographics.json` contains `ageGroups` array with male/female counts for 2024 and 2050. Data verified against at least 2 sources.
+`data/demographics.json` contains `ageGroups` array with male/female counts for 2024 and 2050. Data verified against 2+ sources. Pandas loads cleanly.
 
 ---
 
@@ -75,10 +75,10 @@ Collect UN World Population Prospects data for UP state (Uttar Pradesh proxy fro
 | **Dependencies** | — |
 
 **Description**
-Collect coordinates for: Ganga Expressway, Purvanchal Expressway, Bundelkhand Expressway, Agra-Lucknow Expressway, Jewar Airport, Kushinagar Airport, Varanasi Airport. Store as `infrastructure.json` with GeoJSON feature collection.
+Collect coordinates for: Ganga Expressway, Purvanchal Expressway, Bundelkhand Expressway, Agra-Lucknow Expressway, Jewar Airport, Kushinagar Airport, Varanasi Airport. Store as `data/infrastructure.json` (valid GeoJSON FeatureCollection). Verify renders via `geopandas.read_file()`.
 
 **Acceptance Criteria**
-`infrastructure.json` contains valid GeoJSON `FeatureCollection`. All expressway paths render correctly on D3 Mercator projection centered on UP.
+`data/infrastructure.json` is valid GeoJSON. `geopandas.read_file()` loads without errors. All expressway paths render on Mercator projection centered on UP (lat 27.5, lon 80.9).
 
 ---
 
@@ -93,20 +93,20 @@ Collect coordinates for: Ganga Expressway, Purvanchal Expressway, Bundelkhand Ex
 | **Dependencies** | UP-001, UP-002, UP-003 |
 
 **Description**
-Create a source-attribution CSV that maps every displayed number on the poster to its source URL, publication year, and notes. This ensures defensibility if judges question data.
+Create `data/source_attribution.csv` mapping every displayed number to source URL, publication year, notes. Load with `pandas.read_csv()` for reference.
 
 **Acceptance Criteria**
-`source_attribution.csv` exists with columns: `metric, value, source_name, source_url, year, notes`. Minimum 10 rows.
+CSV exists with columns: `metric, value, source_name, source_url, year, notes`. Minimum 10 rows. Loads cleanly via pandas.
 
 ---
 
 ## EPIC-2: Design System Setup
 
-> Establish the visual foundation before any component work begins. All components pull from this system — no hardcoded colors or fonts in component files.
+> Establish visual foundation before component work. All modules import from `utils/palette.py` — no hardcoded colors or font sizes anywhere else.
 
 ---
 
-### `UP-005` · Set Up React + Vite + Tailwind Project
+### `UP-005` · Set Up Python Project + Virtual Environment
 
 | | |
 |---|---|
@@ -117,14 +117,14 @@ Create a source-attribution CSV that maps every displayed number on the poster t
 | **Dependencies** | — |
 
 **Description**
-Initialize project with `npm create vite@latest up2050 -- --template react`. Install and configure Tailwind CSS v3. Configure `vite.config.js`. Verify dev server runs at `localhost:5173`.
+Initialize Python 3.11 project. Create `venv`. Install all packages from `requirements.txt`. Verify `python generate_poster.py` runs (even with placeholder output). Set up `web/app.py` Flask stub. Confirm Flask runs at `localhost:5000`.
 
 **Acceptance Criteria**
-`npm run dev` launches without errors. Tailwind utility classes render correctly in browser. Project structure matches spec in TechArch doc.
+`pip install -r requirements.txt` succeeds. `python generate_poster.py` runs without import errors. `flask run` starts dev server. Folder structure matches TechArch doc section 3.1.
 
 ---
 
-### `UP-006` · Implement Color Token System
+### `UP-006` · Implement Color Token System (`palette.py`)
 
 | | |
 |---|---|
@@ -135,14 +135,14 @@ Initialize project with `npm create vite@latest up2050 -- --template react`. Ins
 | **Dependencies** | UP-005 |
 
 **Description**
-Define all color tokens in `tailwind.config.js` `extend.colors` block using names from Frontend Spec section 2. Include: `ganga-blue`, `deep-saffron`, `gold`, `charcoal-night`, `varanasi-maroon`, `mint-green`, `pale-mist`.
+Create `utils/palette.py` with all color constants as Python hex strings. Define: `GANGA_BLUE`, `DEEP_SAFFRON`, `GOLD`, `CHARCOAL_NIGHT`, `VARANASI_MAROON`, `MINT_GREEN`, `PALE_MIST`, `WHITE`. Also define font-size constants and register custom fonts via `matplotlib.font_manager`.
 
 **Acceptance Criteria**
-All 7 color tokens resolve correctly in Tailwind classes (`bg-ganga-blue`, `text-gold`, etc.). Colors match hex values in Frontend Spec exactly.
+All 8 color constants defined. Importing `from utils.palette import GANGA_BLUE` works in any module. Matplotlib renders correct colors in test figure.
 
 ---
 
-### `UP-007` · Implement Typography System + Font Loading
+### `UP-007` · Register Custom Fonts in Matplotlib
 
 | | |
 |---|---|
@@ -153,14 +153,14 @@ All 7 color tokens resolve correctly in Tailwind classes (`bg-ganga-blue`, `text
 | **Dependencies** | UP-005, UP-006 |
 
 **Description**
-Add Google Fonts import to `index.css` for Space Grotesk, Inter, Tiro Devanagari Hindi. Configure Tailwind `fontFamily` tokens. Implement `document.fonts.ready` guard in `main.jsx` before app renders.
+Download Space Grotesk, Inter, and Tiro Devanagari Hindi TTF files into `web/static/fonts/`. Register via `matplotlib.font_manager.fontManager.addfont()` in `palette.py`. Verify each font renders in a test `matplotlib.text` call. Document font registration order in comments.
 
 **Acceptance Criteria**
-All 3 fonts load correctly in browser. Font names match tokens in Tailwind config. Console shows no font-load errors.
+All 3 fonts render in Matplotlib without fallback to DejaVu. Devanagari text renders Hindi numerals/script correctly. No font warnings in console.
 
 ---
 
-### `UP-008` · Build PosterCanvas Skeleton (1080px fixed grid)
+### `UP-008` · Build PosterCanvas Skeleton (1080×1080 Matplotlib Figure)
 
 | | |
 |---|---|
@@ -171,20 +171,20 @@ All 3 fonts load correctly in browser. Font names match tokens in Tailwind confi
 | **Dependencies** | UP-005, UP-006, UP-007 |
 
 **Description**
-Create `PosterCanvas.jsx` as the root poster container. Implement 6-zone vertical grid layout per Frontend Spec section 4.2. Each zone renders a placeholder `div` with correct height and label. Implement CSS scale transform for responsive viewing.
+Create `poster/canvas.py`. Use `matplotlib.figure.Figure(figsize=(10.8, 10.8), dpi=100)` for 1080×1080pt canvas. Use `GridSpec` to define 6 zones per Frontend Spec section 4.2. Each zone renders a placeholder `Axes` with correct height ratio and label. Call `export.py` to save PNG.
 
 **Acceptance Criteria**
-PosterCanvas renders at 1080px on desktop. Scale transform correctly adjusts poster to viewport width on mobile (375px test). All 6 zones visible with correct heights.
+`python generate_poster.py` outputs `UP2050_Poster.png` at 1080×1080px. All 6 zones visible with correct proportions. File saves without errors.
 
 ---
 
 ## EPIC-3: Poster Components
 
-> Build each poster section as an isolated React component. Components are developed in order of visual priority (P0 first). All components receive data via props — no direct data imports inside components.
+> Build each poster section as an isolated Python module. Modules receive data as arguments — no direct file reads inside render modules.
 
 ---
 
-### `UP-009` · Build HeroSection Component
+### `UP-009` · Build `hero_section.py`
 
 | | |
 |---|---|
@@ -195,14 +195,14 @@ PosterCanvas renders at 1080px on desktop. Scale transform correctly adjusts pos
 | **Dependencies** | UP-008 |
 
 **Description**
-Create `HeroSection.jsx`. Display large '2050' headline, tagline line, and subtext. Implement glow animation on '2050' text using CSS keyframe. Background: dark gradient. Export mode must disable animation.
+Create `poster/hero_section.py`. Render '2050' headline in Space Grotesk 96pt Bold, tagline, subtext. Background: dark gradient via `ax.set_facecolor()` + custom gradient patch. In `export_mode=True`, skip any animation code paths.
 
 **Acceptance Criteria**
-HeroSection renders correctly in PosterCanvas zone 1. '2050' text displays at 96px Space Grotesk Bold. Animation plays in browser mode, stops when `exportMode=true`.
+Hero section renders in PosterCanvas zone 1. '2050' text at correct size and color. Dark gradient background visible. Module accepts `ax` (Matplotlib Axes) as first argument.
 
 ---
 
-### `UP-010` · Build DataPulse Component (4 Metric Cards)
+### `UP-010` · Build `data_pulse.py` (4 Metric Cards)
 
 | | |
 |---|---|
@@ -213,14 +213,14 @@ HeroSection renders correctly in PosterCanvas zone 1. '2050' text displays at 96
 | **Dependencies** | UP-008, UP-001 |
 
 **Description**
-Create `DataPulse.jsx`. Render 4 metric cards in a 4-column grid. Each card shows icon, projected value (count-up animation), metric label, and delta vs baseline. Icons from `react-icons` or inline SVG. Count-up via `useEffect` + `requestAnimationFrame`.
+Create `poster/data_pulse.py`. Render 4 metric cards in 4-column `GridSpec` subgrid. Each card: semi-transparent background patch, large value text, label, delta arrow (▲/▼) with color. Data loaded from `projections.json` via `data_transform.py`.
 
 **Acceptance Criteria**
-All 4 metric cards render with correct data from `projections.json`. Count-up animation works in browser. Delta arrows show correct direction. Export mode: static final values shown, no animation.
+All 4 cards render with correct values. Delta arrows show correct direction/color. Glass-effect background via `Rectangle` patch with alpha. No animation in export mode.
 
 ---
 
-### `UP-011` · Build InfraMap Component (D3 SVG Map)
+### `UP-011` · Build `infra_map.py` (GeoPandas Map)
 
 | | |
 |---|---|
@@ -231,14 +231,14 @@ All 4 metric cards render with correct data from `projections.json`. Count-up an
 | **Dependencies** | UP-008, UP-003 |
 
 **Description**
-Create `InfraMap.jsx` using D3 v7. Implement `geoMercator` projection centered on UP (lat 27.5, lon 80.9). Render expressway paths from `infrastructure.json` GeoJSON. Render airport dots and city dots. **No text labels on map.**
+Create `poster/infra_map.py`. Load GeoJSON via `geopandas.read_file()`. Plot expressways via `gdf.plot(ax=ax)` with Mercator projection. Add airport dots via `ax.scatter()`. Add city dots. **No text labels on map.**
 
 **Acceptance Criteria**
-Map renders all 4 expressway routes as SVG paths. Airport dots visible at correct coordinates. Map fits within 1080×240px zone. No text labels visible on exported image.
+All 4 expressway routes render as lines. Airport/city dots at correct coordinates. Map fits 1080×240px zone. Transparent background. Zero text labels in output.
 
 ---
 
-### `UP-012` · Build SkylineIllustration Component (SVG Skyline)
+### `UP-012` · Build `skyline.py` (Matplotlib Path Skyline)
 
 | | |
 |---|---|
@@ -249,14 +249,14 @@ Map renders all 4 expressway routes as SVG paths. Airport dots visible at correc
 | **Dependencies** | UP-008 |
 
 **Description**
-Create `SkylineIllustration.jsx` as a pure SVG illustration. Design three-city merged skyline: Varanasi ghats (left), Lucknow dome (center), Noida towers (right). Include window light elements. Sky gradient background.
+Create `poster/skyline.py` using `matplotlib.patches.PathPatch` and `matplotlib.path.Path`. Design three-city merged skyline: Varanasi ghats (left), Lucknow dome (center), Noida towers (right). Add `Rectangle` window lights. Sky gradient via `LinearSegmentedColormap`.
 
 **Acceptance Criteria**
-SVG skyline clearly shows three distinct architectural identities. Renders crisply at 1080px width. **No raster images used** — pure SVG paths only.
+SVG-equivalent skyline clearly shows three distinct architectural identities. Crisp at 1080px. No raster images — pure Matplotlib vector paths only.
 
 ---
 
-### `UP-013` · Build CulturalLayer Component (Silhouette Overlays)
+### `UP-013` · Build `cultural_layer.py` (Silhouette Overlays)
 
 | | |
 |---|---|
@@ -267,14 +267,14 @@ SVG skyline clearly shows three distinct architectural identities. Renders crisp
 | **Dependencies** | UP-008 |
 
 **Description**
-Create `CulturalLayer.jsx` with 4 semi-transparent SVG silhouettes: Taj Mahal outline, Kashi Vishwanath spire, Ganga curve, Banarasi border pattern. Position as absolute overlays on the poster. Opacity values per Frontend Spec.
+Create `poster/cultural_layer.py` with 4 semi-transparent silhouette patches: Taj Mahal outline, Kashi Vishwanath spire, Ganga curve, Banarasi border pattern. Render using `PathPatch` with `alpha` values per Frontend Spec. Position as absolute overlays via `ax.set_zorder()`.
 
 **Acceptance Criteria**
-All 4 silhouettes render at correct positions and opacities. State identity is decodable without text labels. No visible text in component output.
+All 4 silhouettes render at correct positions and opacities. State identity decodable without text. No text in module output.
 
 ---
 
-### `UP-014` · Build DemographicPyramid Component
+### `UP-014` · Build `demographic_pyramid.py`
 
 | | |
 |---|---|
@@ -285,20 +285,20 @@ All 4 silhouettes render at correct positions and opacities. State identity is d
 | **Dependencies** | UP-008, UP-002 |
 
 **Description**
-Create `DemographicPyramid.jsx` using D3. Classic horizontal bar chart mirrored for male/female. Show 2050 projection data only. Age groups on center Y axis, bar length = population. Color: male = Ganga Blue, female = Deep Saffron.
+Create `poster/demographic_pyramid.py` using `ax.barh()`. Classic mirrored horizontal bar chart for male/female 2050 data. Age groups on center Y axis. Color: male = `GANGA_BLUE`, female = `DEEP_SAFFRON`. Load data from `demographics.json`.
 
 **Acceptance Criteria**
-Pyramid renders with correct male/female bars for all age groups from `demographics.json`. No labels that mention state name. Fits within assigned poster zone.
+Pyramid renders correct male/female bars for all age groups. No state-name labels. Fits assigned poster zone. Bars align correctly at center axis.
 
 ---
 
 ## EPIC-4: Export & Deployment
 
-> Critical path — without a working export, there is no submission. Treat these tickets as absolute P0 even if components are not 100% polished.
+> Critical path — without working export, no submission. P0 regardless of component polish.
 
 ---
 
-### `UP-015` · Implement Poster Export (html2canvas + FileSaver)
+### `UP-015` · Implement Poster Export (`export.py` + CLI)
 
 | | |
 |---|---|
@@ -309,20 +309,20 @@ Pyramid renders with correct male/female bars for all age groups from `demograph
 | **Dependencies** | UP-009 through UP-014 |
 
 **Description**
-Create `usePosterExport.js` hook. Implement:
-1. Set `exportMode=true` on root
-2. Wait for `document.fonts.ready`
-3. Call `html2canvas` on `PosterCanvas` ref at `scale=2`
-4. Convert canvas to blob
-5. Use `FileSaver.js` to download `'UP2050_Poster.png'`
-6. Set `exportMode=false`
+Create `utils/export.py`. Implement:
+1. Set `export_mode=True` in canvas call
+2. Call `fig.savefig('UP2050_Poster.png', dpi=216, bbox_inches='tight', facecolor=CHARCOAL_NIGHT)`
+3. Use Pillow to verify output dimensions (2160×2160 at 2× DPI)
+4. Optionally upscale via `Image.resize()` if needed
+
+`generate_poster.py` CLI: `python generate_poster.py [--output path] [--dpi 216]`
 
 **Acceptance Criteria**
-Clicking export button downloads a valid PNG file. File is 2160×2160px (2× scale). All components visible in export. Fonts render correctly. No white boxes or missing elements.
+Running CLI downloads valid PNG. File is ~2160×2160px. All components visible. Fonts render correctly. No blank zones or missing elements.
 
 ---
 
-### `UP-016` · Deploy to Vercel
+### `UP-016` · Deploy to Render
 
 | | |
 |---|---|
@@ -333,10 +333,10 @@ Clicking export button downloads a valid PNG file. File is 2160×2160px (2× sca
 | **Dependencies** | UP-015 |
 
 **Description**
-Push codebase to GitHub. Connect Vercel to repo. Configure build: `command=vite build`, `output=dist`. Trigger deploy. Verify live URL works. Share URL for hackathon portal submission.
+Push codebase to GitHub. Connect Render to repo. Configure: `buildCommand = pip install -r requirements.txt`, `startCommand = gunicorn web.app:app`. Add `render.yaml`. Trigger deploy. Verify live URL. Flask app serves pre-generated PNG via `/` route and `/download` route.
 
 **Acceptance Criteria**
-Live URL accessible at `https://[project].vercel.app`. Poster renders correctly on desktop and mobile. Export button works on live site.
+Live URL accessible at `https://[project].onrender.com`. Poster image renders on desktop + mobile. Download button serves PNG file.
 
 ---
 
@@ -351,19 +351,16 @@ Live URL accessible at `https://[project].vercel.app`. Poster renders correctly 
 | **Dependencies** | UP-015 |
 
 **Description**
-Manual audit of all rendered text in the exported PNG. Check:
-1. Zero occurrences of 'Uttar Pradesh', 'UP', 'U.P.' or any district/city names that would make identification trivial
-2. All data values match source attribution CSV
-3. Tags/hashtag not in image (they go in caption)
+Run `grep -r "Uttar Pradesh\|U\.P\.\| UP " poster/ web/ data/` to catch any state name leaks in code strings. Manual visual audit of exported PNG. Verify all data values match `source_attribution.csv`.
 
 **Acceptance Criteria**
-Audit checklist signed off. Zero state name violations found. Data values verified. Image approved for upload.
+`grep` returns zero matches. Visual audit signed off. Data values verified. Image approved for upload.
 
 ---
 
 ## EPIC-5: Social Media & Submission
 
-> The final mile. All technical work means nothing if the submission is rejected or the post is removed. Execute with precision.
+> Final mile. All technical work means nothing if submission is rejected. Execute with precision.
 
 ---
 
@@ -378,10 +375,10 @@ Audit checklist signed off. Zero state name violations found. Data values verifi
 | **Dependencies** | UP-017 |
 
 **Description**
-Write final post caption using the template in Frontend Spec section 9. Must include: riddle framing, state clues (no name), `#WhichStateAmI` hashtag, `@Hack2skill` tag, `@Google for Developers` tag. Get a second pair of eyes to verify no state name slipped in.
+Write final caption using template from Frontend Spec section 9. Must include riddle framing, clues (no state name), `#WhichStateAmI`, `@Hack2skill`, `@Google for Developers`. Second-pair review to confirm no state name slipped in.
 
 **Acceptance Criteria**
-Caption text reviewed and approved. Hashtag present. Both tags present. No state name visible. Caption is engaging — question format encourages comments.
+Caption reviewed and approved. Hashtag present. Both tags present. No state name. Engaging question format encourages comments.
 
 ---
 
@@ -396,10 +393,10 @@ Caption text reviewed and approved. Hashtag present. Both tags present. No state
 | **Dependencies** | UP-018 |
 
 **Description**
-Upload exported PNG to LinkedIn post (choose 'Photo' post type, not article). Add caption. Set visibility to **Public**. Post. Repeat on Instagram. Capture post URLs from both platforms.
+Upload exported PNG to LinkedIn (Photo post, not article). Add caption. Set to **Public**. Post. Repeat on Instagram. Capture post URLs from both platforms.
 
 **Acceptance Criteria**
-Both posts live and publicly accessible. LinkedIn post URL copied. Instagram post URL copied. Both posts set to Public visibility.
+Both posts live and publicly accessible. LinkedIn post URL copied. Instagram post URL copied. Both set to Public visibility.
 
 ---
 
@@ -414,10 +411,10 @@ Both posts live and publicly accessible. LinkedIn post URL copied. Instagram pos
 | **Dependencies** | UP-019 |
 
 **Description**
-Log in to Hack2Skill portal. Navigate to [Mini Challenge 2] Which State Am I? submission. Select challenge and theme 'Fast forward to 2050'. Paste LinkedIn post URL in submission field. Submit before **07/06/2026 11:59 PM IST**. Screenshot confirmation page.
+Log in to Hack2Skill portal. Navigate to [Mini Challenge 2] Which State Am I? Select theme 'Fast forward to 2050'. Paste LinkedIn post URL. Submit before **07/06/2026 11:59 PM IST**. Screenshot confirmation page.
 
 **Acceptance Criteria**
-Portal shows submission confirmed. Submission Attempts counter updates to 1/1. Screenshot of confirmation saved. Submitted before deadline.
+Portal shows submission confirmed. Attempts counter updates to 1/1. Screenshot saved. Submitted before deadline.
 
 ---
 
@@ -429,18 +426,18 @@ Portal shows submission confirmed. Submission Attempts counter updates to 1/1. S
 | UP-002 | Compile Demographic Data | E1 | 🔴 P0 | 3 | 03 Jun | To Do |
 | UP-003 | Map Infrastructure Data | E1 | 🔴 P0 | 4 | 03 Jun | To Do |
 | UP-004 | Source Attribution Table | E1 | 🟡 P1 | 3 | 04 Jun | To Do |
-| UP-005 | React + Vite + Tailwind Setup | E2 | 🔴 P0 | 2 | 03 Jun | To Do |
-| UP-006 | Color Token System | E2 | 🔴 P0 | 2 | 04 Jun | To Do |
-| UP-007 | Typography + Font Loading | E2 | 🔴 P0 | 3 | 04 Jun | To Do |
-| UP-008 | PosterCanvas Skeleton | E2 | 🔴 P0 | 5 | 04 Jun | To Do |
-| UP-009 | HeroSection Component | E3 | 🔴 P0 | 3 | 04 Jun | To Do |
-| UP-010 | DataPulse Component | E3 | 🔴 P0 | 5 | 05 Jun | To Do |
-| UP-011 | InfraMap Component | E3 | 🔴 P0 | 5 | 05 Jun | To Do |
-| UP-012 | SkylineIllustration Component | E3 | 🟡 P1 | 5 | 05 Jun | To Do |
-| UP-013 | CulturalLayer Component | E3 | 🔴 P0 | 3 | 05 Jun | To Do |
-| UP-014 | DemographicPyramid Component | E3 | 🟡 P1 | 3 | 05 Jun | To Do |
-| UP-015 | Poster Export Implementation | E4 | 🔴 P0 | 4 | 06 Jun | To Do |
-| UP-016 | Vercel Deployment | E4 | 🔴 P0 | 2 | 06 Jun | To Do |
+| UP-005 | Python Project + Venv Setup | E2 | 🔴 P0 | 2 | 03 Jun | To Do |
+| UP-006 | Color Token System (`palette.py`) | E2 | 🔴 P0 | 2 | 04 Jun | To Do |
+| UP-007 | Font Registration in Matplotlib | E2 | 🔴 P0 | 3 | 04 Jun | To Do |
+| UP-008 | PosterCanvas Skeleton (Matplotlib GridSpec) | E2 | 🔴 P0 | 5 | 04 Jun | To Do |
+| UP-009 | `hero_section.py` | E3 | 🔴 P0 | 3 | 04 Jun | To Do |
+| UP-010 | `data_pulse.py` | E3 | 🔴 P0 | 5 | 05 Jun | To Do |
+| UP-011 | `infra_map.py` (GeoPandas) | E3 | 🔴 P0 | 5 | 05 Jun | To Do |
+| UP-012 | `skyline.py` (Path patches) | E3 | 🟡 P1 | 5 | 05 Jun | To Do |
+| UP-013 | `cultural_layer.py` | E3 | 🔴 P0 | 3 | 05 Jun | To Do |
+| UP-014 | `demographic_pyramid.py` | E3 | 🟡 P1 | 3 | 05 Jun | To Do |
+| UP-015 | Poster Export (`export.py` + CLI) | E4 | 🔴 P0 | 4 | 06 Jun | To Do |
+| UP-016 | Render Deployment | E4 | 🔴 P0 | 2 | 06 Jun | To Do |
 | UP-017 | Pre-Export Compliance Audit | E4 | 🔴 P0 | 2 | 06 Jun | To Do |
 | UP-018 | Write Post Caption | E5 | 🔴 P0 | 3 | 06 Jun | To Do |
 | UP-019 | Post on LinkedIn + Instagram | E5 | 🔴 P0 | 2 | 07 Jun | To Do |
