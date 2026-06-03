@@ -1,23 +1,23 @@
-# UP 2050 — Technical Architecture Document
-## Hack2Skill × Google for Developers · v1.0 · June 2026
+# UP 2050 — Technical Architecture Document (Python Stack)
+## Hack2Skill × Google for Developers · v2.0 · June 2026
 
 ---
 
 ## 1. Architecture Overview
 
-The UP 2050 project has two layers: a **static image layer** (the primary deliverable) and an **optional interactive web layer** (bonus). The architecture supports both outputs from a single React codebase using server-side rendering and canvas export.
+UP 2050 has two layers: a **static image layer** (primary deliverable) and an **optional interactive web layer** (bonus). Python stack generates the poster via Matplotlib/Pillow, serves the web version via Flask, and exports PNG for social upload.
 
 ### 1.1 System Diagram — Component Layers
 
 | Layer | Technology | Purpose | Output |
 |-------|------------|---------|--------|
-| Data Layer | JSON / CSV static files | Holds all UP 2050 projections, metrics | Consumed by viz components |
-| Design System | Tailwind CSS + custom tokens | Color palette, typography, spacing | Applied to all UI components |
-| Visualization Engine | D3.js v7 + Recharts | Data charts, maps, timelines | SVG renders inside poster |
-| Poster Canvas | React + html2canvas | Composes all elements into poster | 1080×1080 PNG export |
-| Web App Shell | React 18 + Vite | Dev server, hot reload, routing | localhost + Vercel deploy |
-| Export Pipeline | html2canvas + FileSaver.js | High-res image export | PNG file for social upload |
-| Deployment | Vercel (free tier) | Hosts interactive version | Live URL for hackathon link |
+| Data Layer | JSON / CSV static files | Holds all UP 2050 projections, metrics | Consumed by viz modules |
+| Design System | Python constants (`palette.py`) | Color tokens, font sizes, spacing | Imported by all render modules |
+| Visualization Engine | Matplotlib + GeoPandas + Shapely | Data charts, maps, SVG overlays | PNG/SVG renders inside poster |
+| Poster Canvas | Pillow (PIL) + Matplotlib Figure | Composes all elements into poster | 1080×1080 PNG export |
+| Web App Shell | Flask + Jinja2 | Dev server, routing, HTML preview | localhost:5000 + Render deploy |
+| Export Pipeline | Pillow `Image.save()` | High-res image export | PNG file for social upload |
+| Deployment | Render (free tier) | Hosts interactive version | Live URL for hackathon link |
 
 ---
 
@@ -27,12 +27,13 @@ The UP 2050 project has two layers: a **static image layer** (the primary delive
 
 | Tool | Version | Why Chosen | Alternatives Rejected |
 |------|---------|------------|----------------------|
-| React | 18.x | Component-based poster construction, easy state management | Vue (less ecosystem for canvas export) |
-| Vite | 5.x | Fast dev server, optimal build for Vercel deploy | CRA (slow), Next.js (overkill) |
-| D3.js | 7.x | Best-in-class data viz, SVG control for poster elements | Chart.js (less control), Plotly (heavy) |
-| Tailwind CSS | 3.x | Utility-first, easy responsive layout | Styled-components (verbose), CSS Modules |
-| html2canvas | 1.4.x | Converts React DOM to canvas for PNG export | Puppeteer (server-side, complex) |
-| Vercel | — | Free, instant deploy from GitHub, custom domain | Netlify (comparable), GitHub Pages (static only) |
+| Python | 3.11+ | Ecosystem for data viz + image gen | — |
+| Matplotlib | 3.9.x | Full poster layout, subplots, custom artists | Plotly (browser-first, harder PNG export) |
+| GeoPandas | 0.14.x | GeoJSON map rendering with Mercator projection | D3 (JS only) |
+| Pillow (PIL) | 10.x | Compositing layers, final PNG export, 2× scale | OpenCV (heavy) |
+| Flask | 3.x | Lightweight web preview server | Django (overkill), FastAPI (no Jinja2 SSR) |
+| Jinja2 | 3.x | HTML template for web version | React (JS, off-stack) |
+| Render | — | Free Python web service deploy from GitHub | Vercel (Node-optimized), Railway (comparable) |
 
 ### 2.2 Data Sources
 
@@ -41,9 +42,9 @@ The UP 2050 project has two layers: a **static image layer** (the primary delive
 | UP 2050 GDP Projection | NITI Aayog State Vision Documents | JSON (manual entry) |
 | Population Pyramid 2050 | Census 2011 + UN World Population Prospects | CSV |
 | Expressway Network Coordinates | UPEIDA official data | GeoJSON |
-| Renewable Energy Targets | UP New & Renewable Energy Development Agency (UPNEDA) | JSON |
+| Renewable Energy Targets | UPNEDA | JSON |
 | Literacy Rate Trend | ASER / NFHS data + extrapolation | JSON |
-| Urbanization Rate | World Bank India urbanization + UP state share | JSON |
+| Urbanization Rate | World Bank India + UP state share | JSON |
 
 ---
 
@@ -53,43 +54,46 @@ The UP 2050 project has two layers: a **static image layer** (the primary delive
 
 ```
 up2050/
-├── public/
-│   └── assets/          # Static icons, silhouettes (SVG)
-├── src/
-│   ├── components/      # Poster section components
-│   │   ├── HeroSection.jsx
-│   │   ├── DataPulse.jsx
-│   │   ├── InfraMap.jsx
-│   │   ├── CulturalLayer.jsx
-│   │   ├── SkylineIllustration.jsx
-│   │   └── PosterCanvas.jsx
-│   ├── data/            # Static JSON data files
-│   │   ├── projections.json
-│   │   ├── demographics.json
-│   │   └── infrastructure.json
-│   ├── hooks/           # Custom React hooks
-│   │   └── usePosterExport.js
-│   ├── utils/           # Helper functions
-│   │   ├── dataTransform.js
-│   │   └── colorPalette.js
-│   ├── App.jsx
-│   └── main.jsx
-├── vite.config.js
-└── package.json
+├── data/
+│   ├── projections.json
+│   ├── demographics.json
+│   ├── infrastructure.json
+│   └── source_attribution.csv
+├── poster/
+│   ├── canvas.py            # Root poster compositor (Matplotlib Figure)
+│   ├── hero_section.py      # 2050 headline + tagline axes
+│   ├── data_pulse.py        # 4 metric cards (Matplotlib subplots)
+│   ├── infra_map.py         # GeoPandas expressway + airport map
+│   ├── cultural_layer.py    # SVG silhouette overlays via Matplotlib patches
+│   ├── skyline.py           # SVG skyline via Matplotlib path patches
+│   └── demographic_pyramid.py  # Population pyramid (Matplotlib barh)
+├── utils/
+│   ├── palette.py           # Color tokens + font sizes as Python constants
+│   ├── data_transform.py    # JSON/CSV loaders + transform helpers
+│   └── export.py            # Pillow save + 2× upscale logic
+├── web/
+│   ├── app.py               # Flask app
+│   ├── templates/
+│   │   └── index.html       # Jinja2 HTML poster preview + download button
+│   └── static/
+│       └── style.css        # Minimal CSS for web shell
+├── generate_poster.py       # CLI entry point: python generate_poster.py
+├── requirements.txt
+└── render.yaml              # Render deployment config
 ```
 
-### 3.2 Component Architecture
+### 3.2 Module Architecture
 
-| Component | Responsibility | Key Props / State |
-|-----------|---------------|-------------------|
-| `PosterCanvas` | Root poster container — 1080px fixed width grid | `exportMode: bool` |
-| `HeroSection` | 2050 headline, countdown, color sweep background | `year`, `tagline` |
-| `DataPulse` | 4 key metric cards (GDP, Population, Renewables, Literacy) | `metrics: Array<{label, value, unit, delta}>` |
-| `InfraMap` | SVG map of expressways + airports radiating from center | `routes: GeoJSON features` |
-| `CulturalLayer` | Iconic silhouettes overlay (Taj, Ganga, Kashi spire) | `opacity`, `showLabels: false` |
-| `SkylineIllustration` | 2050 city skyline SVG — Varanasi + Noida merged | `animated: bool` |
-| `DemographicPyramid` | Population pyramid chart (D3) | `data: {male, female, ageGroups}` |
-| `PosterExportBtn` | Triggers html2canvas + file download | `targetRef`, `filename` |
+| Module | Responsibility | Key Inputs / Outputs |
+|--------|---------------|----------------------|
+| `canvas.py` | Root compositor — creates 1080×1080 Matplotlib figure, calls all section renderers | `export_mode: bool` → PNG |
+| `hero_section.py` | Renders 2050 headline, tagline, dark gradient background via Matplotlib axes | `year`, `tagline` → Axes |
+| `data_pulse.py` | 4 metric cards as subplot panels — value, label, delta arrow | `metrics: list[dict]` → Axes |
+| `infra_map.py` | GeoPandas Mercator map, expressway paths, airport/city dots | `infrastructure.json` → Axes |
+| `cultural_layer.py` | Semi-transparent SVG silhouettes (Taj, Ganga, Kashi) as Matplotlib patches | `opacity` settings → Axes |
+| `skyline.py` | Three-city SVG skyline via Matplotlib path patches | `animated: bool` → Axes |
+| `demographic_pyramid.py` | Horizontal mirrored bar chart for 2050 population | `demographics.json` → Axes |
+| `export.py` | Saves figure at 2× DPI (216 dpi → 2160×2160 effective), writes PNG | `fig`, `filename` → .png |
 
 ---
 
@@ -97,87 +101,105 @@ up2050/
 
 ### 4.1 Data Pipeline
 
-All data is static (no API calls at runtime). Data flows from JSON files through transformation utilities into D3/Recharts visualization components, which render inside the `PosterCanvas` container.
+All data is static — no runtime API calls. JSON/CSV files are loaded by `data_transform.py` and passed into each render module.
 
 ```
-projections.json    → dataTransform.js → DataPulse.jsx         → SVG/HTML render
-demographics.json   → dataTransform.js → DemographicPyramid.jsx → D3 SVG
-infrastructure.json →                  → InfraMap.jsx           → D3 geo projection → SVG paths
+projections.json    → data_transform.py → data_pulse.py          → Matplotlib subplot
+demographics.json   → data_transform.py → demographic_pyramid.py → Matplotlib barh
+infrastructure.json →                   → infra_map.py           → GeoPandas plot → Axes
 ```
 
 ### 4.2 Export Flow
 
-1. User clicks **'Export Poster'** button
-2. `usePosterExport` hook calls `html2canvas` on `PosterCanvas` ref
-3. `html2canvas` renders DOM to `<canvas>` at 2× pixel ratio (2160×2160 for retina)
-4. `canvas.toBlob()` → `FileSaver.js` saves as `'UP2050_Poster.png'`
-5. User uploads PNG to LinkedIn/Instagram manually
+1. Run `python generate_poster.py`
+2. `canvas.py` creates a 1080×1080pt Matplotlib `Figure`
+3. All section modules render into their assigned `Axes` regions
+4. `export.py` calls `fig.savefig('UP2050_Poster.png', dpi=216, bbox_inches='tight')`
+5. Pillow optionally upscales to 2160×2160 for retina quality
+6. File saved as `UP2050_Poster.png` in project root
+7. User uploads PNG to LinkedIn/Instagram manually
 
-> ⚠️ **Known Issue:** `html2canvas` has known issues with certain CSS transforms and web fonts. All custom fonts must be loaded before export trigger. Use a loading state guard.
+> ⚠️ **Known Issue:** Matplotlib custom fonts require `matplotlib.font_manager` registration. Register Space Grotesk and Tiro Devanagari Hindi TTF files before figure creation. Use `fm.fontManager.addfont()` in `palette.py`.
 
 ---
 
 ## 5. Deployment Architecture
 
-### 5.1 Vercel Deployment
+### 5.1 Render Deployment
 
 | Step | Action | Command / Config |
 |------|--------|-----------------|
 | 1 | Push to GitHub repo | `git push origin main` |
-| 2 | Connect Vercel to GitHub repo | Vercel dashboard → Import project |
-| 3 | Set build command | `vite build` |
-| 4 | Set output directory | `dist` |
-| 5 | Auto-deploy on push | Vercel webhook (automatic) |
-| 6 | Custom URL | `vercel.app` subdomain (free) or custom domain |
+| 2 | Connect Render to GitHub repo | Render dashboard → New Web Service |
+| 3 | Set runtime | Python 3.11 |
+| 4 | Set build command | `pip install -r requirements.txt` |
+| 5 | Set start command | `gunicorn web.app:app` |
+| 6 | Auto-deploy on push | Render webhook (automatic) |
+| 7 | Custom URL | `onrender.com` subdomain (free) |
 
-### 5.2 Performance Targets
+### 5.2 `render.yaml`
+
+```yaml
+services:
+  - type: web
+    name: up2050
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn web.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+```
+
+### 5.3 Performance Targets
 
 | Metric | Target | Strategy |
 |--------|--------|----------|
-| First Contentful Paint | < 1.5s | Vite code splitting + CDN assets |
-| Poster Export Time | < 4s | Lazy load non-critical components |
-| Lighthouse Performance | > 90 | Preload fonts, optimize SVGs |
-| Mobile compatibility | 375px+ viewport | Tailwind responsive utilities |
-| Bundle Size | < 200KB gzipped | Tree-shaking D3 modules individually |
+| Poster generation time (CLI) | < 10s | Pre-load fonts + static data |
+| Web page load | < 2s | Serve pre-generated PNG; no runtime render |
+| PNG file size | < 3MB | Matplotlib PNG compression |
+| Mobile compatibility | 375px+ viewport | CSS max-width + responsive img tag |
 
 ---
 
 ## 6. Security & Compliance
 
-- No user data collected — fully static, no backend
-- No API keys in client code — all data is static JSON
+- No user data collected — fully static, no database
+- No API keys in code — all data is static JSON/CSV
 - GDPR not applicable — no PII collected
-- Content compliance: zero state name in any rendered text (enforced via code review checklist)
-- Image export: no third-party tracking pixels in PNG output
+- Content compliance: zero state name in any rendered text (enforced via `grep` checklist on all `.py` string literals)
+- PNG export: no metadata or tracking in output file
 
 ---
 
 ## 7. Development Environment Setup
 
 ```bash
-# Prerequisites: Node.js 18+, npm 9+
+# Prerequisites: Python 3.11+, pip
 git clone https://github.com/[your-username]/up2050
 cd up2050
-npm install
-npm run dev          # Start dev server at localhost:5173
-npm run build        # Production build → dist/
-npm run preview      # Preview production build locally
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+
+python generate_poster.py       # Generate poster PNG
+python web/app.py               # Start Flask dev server at localhost:5000
 ```
 
-### Dependencies
+### Dependencies (`requirements.txt`)
 
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| `react` | ^18.3.0 | UI framework |
-| `react-dom` | ^18.3.0 | DOM renderer |
-| `vite` | ^5.4.0 | Build tool |
-| `d3` | ^7.9.0 | Data visualization |
-| `recharts` | ^2.12.0 | Charting (secondary) |
-| `html2canvas` | ^1.4.1 | Poster export |
-| `file-saver` | ^2.0.5 | File download |
-| `tailwindcss` | ^3.4.0 | CSS framework |
-| `@tailwindcss/vite` | ^4.0.0 | Tailwind Vite plugin |
-| `lodash` | ^4.17.21 | Data utilities |
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `matplotlib` | >=3.9.0 | Core poster layout + all visualizations |
+| `geopandas` | >=0.14.0 | GeoJSON map rendering |
+| `shapely` | >=2.0.0 | Geometry for map paths |
+| `Pillow` | >=10.0.0 | Image compositing + PNG export |
+| `numpy` | >=1.26.0 | Numeric operations for viz |
+| `pandas` | >=2.2.0 | CSV/JSON data loading |
+| `flask` | >=3.0.0 | Web preview server |
+| `gunicorn` | >=21.0.0 | Production WSGI server for Render |
+| `Jinja2` | >=3.1.0 | HTML templating (Flask dep, explicit) |
+| `pyproj` | >=3.6.0 | Coordinate projection for GeoPandas |
 
 ---
 
