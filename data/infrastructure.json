@@ -1,0 +1,109 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {"name": "Ganga Expressway", "type": "expressway", "length_km": 594, "status": "Under Construction"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [77.41, 28.67], [77.95, 28.40], [78.50, 28.10],
+          [79.10, 27.70], [79.80, 27.20], [80.35, 26.85],
+          [80.95, 26.45], [81.60, 26.10], [82.20, 25.80],
+          [82.80, 25.50], [83.30, 25.30], [83.60, 25.15]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Purvanchal Expressway", "type": "expressway", "length_km": 341, "status": "Operational"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [80.95, 26.85], [81.30, 26.70], [81.80, 26.50],
+          [82.30, 26.30], [82.80, 26.10], [83.20, 25.90],
+          [83.50, 25.60], [83.80, 25.40], [84.10, 25.30]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Bundelkhand Expressway", "type": "expressway", "length_km": 296, "status": "Operational"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [79.95, 26.45], [79.70, 26.20], [79.50, 26.00],
+          [79.30, 25.70], [79.10, 25.45], [78.90, 25.20],
+          [78.60, 25.00], [78.30, 24.80]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Agra-Lucknow Expressway", "type": "expressway", "length_km": 302, "status": "Operational"},
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [78.02, 27.18], [78.40, 27.05], [78.90, 26.90],
+          [79.40, 26.80], [79.90, 26.75], [80.35, 26.70],
+          [80.95, 26.85]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Jewar International Airport", "type": "airport", "status": "Under Construction"},
+      "geometry": {"type": "Point", "coordinates": [77.61, 28.15]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Kushinagar Airport", "type": "airport", "status": "Operational"},
+      "geometry": {"type": "Point", "coordinates": [83.86, 26.77]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Varanasi Airport", "type": "airport", "status": "Operational"},
+      "geometry": {"type": "Point", "coordinates": [82.86, 25.45]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Lucknow Airport", "type": "airport", "status": "Operational"},
+      "geometry": {"type": "Point", "coordinates": [80.88, 26.76]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Agra Airport", "type": "airport", "status": "Operational"},
+      "geometry": {"type": "Point", "coordinates": [78.03, 27.16]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Noida", "type": "city", "population_2050_millions": 18.5},
+      "geometry": {"type": "Point", "coordinates": [77.39, 28.53]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Lucknow", "type": "city", "population_2050_millions": 12.8},
+      "geometry": {"type": "Point", "coordinates": [80.95, 26.85]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Varanasi", "type": "city", "population_2050_millions": 8.2},
+      "geometry": {"type": "Point", "coordinates": [83.00, 25.32]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Agra", "type": "city", "population_2050_millions": 6.5},
+      "geometry": {"type": "Point", "coordinates": [78.02, 27.18]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Prayagraj", "type": "city", "population_2050_millions": 5.8},
+      "geometry": {"type": "Point", "coordinates": [81.85, 25.43]}
+    },
+    {
+      "type": "Feature",
+      "properties": {"name": "Kanpur", "type": "city", "population_2050_millions": 7.1},
+      "geometry": {"type": "Point", "coordinates": [80.35, 26.45]}
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "metrics": [
+    {
+      "id": "gdp",
+      "label": "GDP (USD Trillion)",
+      "baseline_year": 2024,
+      "baseline_value": 0.28,
+      "projected_year": 2050,
+      "projected_value": 1.2,
+      "unit": "T",
+      "prefix": "$",
+      "delta_direction": "up",
+      "source": "NITI Aayog State Vision Document + World Bank South Asia Economic Outlook"
+    },
+    {
+      "id": "population",
+      "label": "Population (Millions)",
+      "baseline_year": 2024,
+      "baseline_value": 241,
+      "projected_year": 2050,
+      "projected_value": 298,
+      "unit": "M",
+      "prefix": "",
+      "delta_direction": "up",
+      "source": "Census 2011 + UN World Population Prospects 2024"
+    },
+    {
+      "id": "renewable_energy",
+      "label": "Renewable Energy",
+      "baseline_year": 2024,
+      "baseline_value": 18,
+      "projected_year": 2050,
+      "projected_value": 72,
+      "unit": "%",
+      "prefix": "",
+      "delta_direction": "up",
+      "source": "UPNEDA + Ministry of New & Renewable Energy"
+    },
+    {
+      "id": "literacy",
+      "label": "Literacy Rate",
+      "baseline_year": 2024,
+      "baseline_value": 73,
+      "projected_year": 2050,
+      "projected_value": 96,
+      "unit": "%",
+      "prefix": "",
+      "delta_direction": "up",
+      "source": "ASER + NFHS-5 Data + Linear Extrapolation"
+    }
+  ],
+  "supplementary": {
+    "urbanization_rate": {
+      "baseline": 22.3,
+      "projected": 45.8,
+      "unit": "%",
+      "source": "World Bank Urban Development Indicators"
+    },
+    "expressway_km": {
+      "baseline": 1100,
+      "projected": 4200,
+      "unit": "km",
+      "source": "UPEIDA Official Data"
+    },
+    "airports_operational": {
+      "baseline": 8,
+      "projected": 22,
+      "unit": "",
+      "source": "UDAN Scheme + AAI Master Plan"
+    },
+    "ev_adoption": {
+      "baseline": 2.1,
+      "projected": 38,
+      "unit": "%",
+      "source": "NITI Aayog EV Mission + SIAM Data"
+    }
+  }
+}

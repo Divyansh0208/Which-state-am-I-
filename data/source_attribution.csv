@@ -1,0 +1,13 @@
+metric,value,source_name,source_url,year,notes
+GDP 2024 Baseline,$0.28T,NITI Aayog State Vision Document,https://niti.gov.in/state-statistics,2024,State GSDP at current prices
+GDP 2050 Projection,$1.2T,World Bank South Asia Economic Outlook,https://worldbank.org/en/region/sar,2024,Compound growth extrapolation at 5.8% CAGR
+Population 2024,241M,Census of India + Registrar General Projection,https://censusindia.gov.in,2024,Based on 2011 census + growth rate projection
+Population 2050,298M,UN World Population Prospects 2024,https://population.un.org/wpp/,2024,Medium variant - India state-level disaggregation
+Renewable Energy 2024,18%,UPNEDA Annual Report,https://upneda.org.in,2024,Solar + wind + biomass as share of installed capacity
+Renewable Energy 2050,72%,Ministry of New and Renewable Energy + NITI Aayog,https://mnre.gov.in,2024,Based on India net-zero 2070 trajectory scaled to state
+Literacy Rate 2024,73%,NFHS-5 State Factsheet,https://rchiips.org/nfhs/,2021,Latest available survey data
+Literacy Rate 2050,96%,ASER Annual Reports + Linear Extrapolation,https://asercentre.org,2024,Based on historical improvement rate 2001-2021
+Urbanization 2024,22.3%,World Bank Urban Development Indicators,https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS,2024,State-level urbanization share
+Urbanization 2050,45.8%,World Urbanization Prospects,https://population.un.org/wup/,2024,Medium projection for northern Indian states
+Expressway Network,4200km,UPEIDA Official Data,https://upeida.up.nic.in,2024,Total planned expressway length by 2050
+Airports 2050,22,UDAN Scheme + AAI Master Plan,https://udanscheme.org,2024,Including regional connectivity airports

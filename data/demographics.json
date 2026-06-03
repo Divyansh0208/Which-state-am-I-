@@ -1,0 +1,28 @@
+{
+  "year_baseline": 2024,
+  "year_projected": 2050,
+  "total_population": {
+    "baseline_millions": 241,
+    "projected_millions": 298
+  },
+  "age_groups": [
+    {"group": "0-4",   "male_2024": 11.2, "female_2024": 10.1, "male_2050": 8.9,  "female_2050": 8.1},
+    {"group": "5-9",   "male_2024": 12.1, "female_2024": 10.9, "male_2050": 9.2,  "female_2050": 8.5},
+    {"group": "10-14", "male_2024": 12.8, "female_2024": 11.5, "male_2050": 9.5,  "female_2050": 8.8},
+    {"group": "15-19", "male_2024": 12.5, "female_2024": 11.2, "male_2050": 9.8,  "female_2050": 9.1},
+    {"group": "20-24", "male_2024": 11.8, "female_2024": 10.6, "male_2050": 10.2, "female_2050": 9.5},
+    {"group": "25-29", "male_2024": 10.9, "female_2024": 9.8,  "male_2050": 10.5, "female_2050": 9.8},
+    {"group": "30-34", "male_2024": 9.8,  "female_2024": 8.9,  "male_2050": 10.8, "female_2050": 10.1},
+    {"group": "35-39", "male_2024": 8.9,  "female_2024": 8.1,  "male_2050": 10.9, "female_2050": 10.2},
+    {"group": "40-44", "male_2024": 7.8,  "female_2024": 7.1,  "male_2050": 10.5, "female_2050": 9.9},
+    {"group": "45-49", "male_2024": 6.5,  "female_2024": 5.9,  "male_2050": 9.8,  "female_2050": 9.3},
+    {"group": "50-54", "male_2024": 5.4,  "female_2024": 4.9,  "male_2050": 8.9,  "female_2050": 8.5},
+    {"group": "55-59", "male_2024": 4.2,  "female_2024": 3.8,  "male_2050": 7.8,  "female_2050": 7.5},
+    {"group": "60-64", "male_2024": 3.2,  "female_2024": 2.9,  "male_2050": 6.5,  "female_2050": 6.3},
+    {"group": "65-69", "male_2024": 2.4,  "female_2024": 2.2,  "male_2050": 5.1,  "female_2050": 5.0},
+    {"group": "70-74", "male_2024": 1.6,  "female_2024": 1.5,  "male_2050": 3.8,  "female_2050": 3.8},
+    {"group": "75-79", "male_2024": 0.9,  "female_2024": 0.9,  "male_2050": 2.5,  "female_2050": 2.6},
+    {"group": "80+",   "male_2024": 0.6,  "female_2024": 0.7,  "male_2050": 1.8,  "female_2050": 2.1}
+  ],
+  "source": "Census 2011 + UN World Population Prospects 2024 Revision, Medium Variant"
+}
