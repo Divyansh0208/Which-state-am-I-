@@ -41,6 +41,13 @@ python generate_poster.py --output my_poster.png --dpi 300
 | `--output`, `-o` | `MysteryState2050_Poster.png` | Output filename |
 | `--dpi`, `-d` | `216` | Export DPI (216 = 2x retina quality) |
 
+### Web Preview
+
+```bash
+python -m flask --app web.app run
+# Open http://localhost:5000
+```
+
 ---
 
 ## Project Progress
@@ -53,12 +60,12 @@ python generate_poster.py --output my_poster.png --dpi 300
 | **Phase 2: Environment Setup** | ✅ Done | Project structure, `requirements.txt`, color palette system (`palette.py`), data loaders, export pipeline |
 | **Phase 3: Poster Engine** | ✅ Done | All 6 poster components built — hero section, skyline, data pulse, infrastructure map, cultural layer, demographic pyramid |
 | **Phase 4: Bug Squashing** | ✅ Done | Fixed transparency artifacts, enforced compliance (zero state name leaks), upgraded skyline with Rumi Darwaza + ghats, fixed mirrored pyramid bars, squared output |
+| **Phase 5: Web Wrapper & Deploy** | ✅ Done | Flask web app (`web/app.py`), Jinja2 template with poster preview + download button, `render.yaml`, deployed to Render free tier |
 
 ### Remaining
 
 | Phase | Status | What's Left |
 | --- | --- | --- |
-| **Phase 5: Web Wrapper & Deploy** | ⏳ Pending | Wrap Matplotlib generation in Flask web app (`web/app.py`), create Jinja2 template with poster preview + download button, add `render.yaml`, deploy to Render free tier |
 | **Phase 6: Social & Submission** | ⏳ Pending | Draft compliant LinkedIn/Instagram caption (no state name!), add required tags (`@Hack2skill`, `@Google for Developers`, `#WhichStateAmI`), post publicly, submit link on Hack2Skill portal |
 
 ---
@@ -89,16 +96,17 @@ project_root/
 │   ├── data_transform.py          #   JSON/CSV data loaders
 │   └── export.py                  #   PNG save + Pillow verification
 │
-├── web/                           #  [Phase 5] Flask web app
-│   ├── app.py                     #   Flask routes (/ and /download)
+├── web/                           #  Flask web app
+│   ├── app.py                     #   Routes: / (preview) + /download + /generate
 │   ├── templates/
 │   │   └── index.html             #   Jinja2 poster preview page
 │   └── static/
-│       └── style.css              #   Minimal responsive CSS
+│       └── style.css              #   Dark theme CSS (matches poster palette)
 │
 ├── generate_poster.py             # CLI entry point
 ├── requirements.txt               # Python dependencies
-├── render.yaml                    #  [Phase 5] Render deployment config
+├── render.yaml                    # Render deployment config
+├── .gitignore
 └── README.md                      # You are here
 ```
 
@@ -111,22 +119,22 @@ The poster is a **1080x1080pt Matplotlib Figure** exported at 2x DPI (216) for r
 ```text
 ┌─────────────────────────────────────┐
 │          HERO SECTION               │  "2050" headline + glow + tagline
-│          (17.5%)                    │
+│          (16.0%)                    │
 ├─────────────────────────────────────┤
 │          SKYLINE STRIP              │  Varanasi → Lucknow → Noida
-│          (15.5%)                    │
+│          (14.0%)                    │
 ├─────────────────────────────────────┤
 │  $1.2T │ 298M │  72%  │  96%       │  4 metric cards with deltas
-│          (14.5%)                    │
+│          (16.0%)                    │
 ├─────────────────────────────────────┤
 │      INFRASTRUCTURE MAP             │  Expressway lines + airport dots
 │          (20.0%)                    │
 ├─────────────────────────────────────┤
 │       CULTURAL FOOTER               │  Taj + Kashi + Ganga + Banarasi
-│          (14.5%)                    │
+│          (14.0%)                    │
 ├─────────────────────────────────────┤
 │     DEMOGRAPHIC PYRAMID             │  Male ◄──── ────► Female
-│          (18.0%)                    │
+│          (20.0%)                    │
 └─────────────────────────────────────┘
 ```
 
@@ -143,19 +151,29 @@ The poster is a **1080x1080pt Matplotlib Figure** exported at 2x DPI (216) for r
 
 ---
 
+## Deployment
+
+Deployed on Render free tier. Auto-deploys on every push to `main`.
+
+```yaml
+# render.yaml (root)
+buildCommand: pip install -r requirements.txt && python generate_poster.py
+startCommand: gunicorn web.app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+```
+
+---
+
 ## Compliance Rules
 
 > **CRITICAL:** The state name must NEVER appear anywhere in the poster, caption, alt text, or social media post.
 
-- Zero mentions of "Uttar Pradesh", "UP", or district names in rendered text
+- Zero mentions of the state name, abbreviation, or any district name in rendered text
 - Verified via automated `findstr` / `grep` audit on all source files
 - Identity communicated purely through visual clues: Taj silhouette, Ganga curve, Kashi spire, Banarasi border, expressway network
 
 ---
 
 ## Data Sources
-
-All projections are sourced from credible government and international organizations. Full attribution in [`data/source_attribution.csv`](data/source_attribution.csv).
 
 | Metric | Source |
 | --- | --- |
@@ -165,6 +183,8 @@ All projections are sourced from credible government and international organizat
 | Literacy Rate | ASER Reports, NFHS-5 |
 | Infrastructure | UPEIDA, UDAN Scheme, AAI Master Plan |
 | Demographics | Census 2011 + UN Projections |
+
+Full attribution in [`data/source_attribution.csv`](data/source_attribution.csv).
 
 ---
 
@@ -177,8 +197,8 @@ All projections are sourced from credible government and international organizat
 | Pillow | >= 10.0 | Image export, dimension verification |
 | NumPy | >= 1.26 | Numeric operations |
 | Pandas | >= 2.2 | Data loading |
-| Flask | >= 3.0 | Web preview server (Phase 5) |
-| Gunicorn | >= 21.0 | Production WSGI server (Phase 5) |
+| Flask | >= 3.0 | Web preview server |
+| Gunicorn | >= 21.0 | Production WSGI server |
 
 ---
 
