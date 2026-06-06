@@ -4,8 +4,8 @@
 
 **Hackathon:** Hack2Skill x Google for Developers — Mini Challenge 2  
 **Theme:** Fast Forward to 2050  
-**Deadline:** 07/06/2026 11:59 PM IST  
-**Stack:** Python (Matplotlib + Pillow + Flask)
+**Stack:** Python (Matplotlib + Pillow + Flask)  
+**Live:** https://which-state-am-i.onrender.com
 
 ---
 
@@ -50,26 +50,6 @@ python -m flask --app web.app run
 
 ---
 
-## Project Progress
-
-### Completed
-
-| Phase | Status | What Was Done |
-| --- | --- | --- |
-| **Phase 1: Data & Research** | ✅ Done | Compiled 2050 projections (GDP, population, energy, literacy), demographics pyramid, infrastructure GeoJSON, and source attribution table |
-| **Phase 2: Environment Setup** | ✅ Done | Project structure, `requirements.txt`, color palette system (`palette.py`), data loaders, export pipeline |
-| **Phase 3: Poster Engine** | ✅ Done | All 6 poster components built — hero section, skyline, data pulse, infrastructure map, cultural layer, demographic pyramid |
-| **Phase 4: Bug Squashing** | ✅ Done | Fixed transparency artifacts, enforced compliance (zero state name leaks), upgraded skyline with Rumi Darwaza + ghats, fixed mirrored pyramid bars, squared output |
-| **Phase 5: Web Wrapper & Deploy** | ✅ Done | Flask web app (`web/app.py`), Jinja2 template with poster preview + download button, `render.yaml`, deployed to Render free tier |
-
-### Remaining
-
-| Phase | Status | What's Left |
-| --- | --- | --- |
-| **Phase 6: Social & Submission** | ⏳ Pending | Draft compliant LinkedIn/Instagram caption (no state name!), add required tags (`@Hack2skill`, `@Google for Developers`, `#WhichStateAmI`), post publicly, submit link on Hack2Skill portal |
-
----
-
 ## Project Structure
 
 ```text
@@ -96,7 +76,7 @@ project_root/
 │   ├── data_transform.py          #   JSON/CSV data loaders
 │   └── export.py                  #   PNG save + Pillow verification
 │
-├── web/                           #  Flask web app
+├── web/                           # Flask web app
 │   ├── app.py                     #   Routes: / (preview) + /download + /generate
 │   ├── templates/
 │   │   └── index.html             #   Jinja2 poster preview page
@@ -156,7 +136,6 @@ The poster is a **1080x1080pt Matplotlib Figure** exported at 2x DPI (216) for r
 Deployed on Render free tier. Auto-deploys on every push to `main`.
 
 ```yaml
-# render.yaml (root)
 buildCommand: pip install -r requirements.txt && python generate_poster.py
 startCommand: gunicorn web.app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
 ```
