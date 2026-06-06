@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 from matplotlib.gridspec import GridSpec
 
 from utils.palette import (
-    CHARCOAL_NIGHT, POSTER_WIDTH, POSTER_HEIGHT, POSTER_DPI, ZONE_RATIOS
+    CHARCOAL_NIGHT, POSTER_WIDTH, POSTER_HEIGHT, POSTER_DPI
 )
 from utils.data_transform import load_projections, load_demographics, load_infrastructure
 
@@ -21,33 +21,26 @@ from poster.demographic_pyramid import render as render_pyramid
 
 
 def create_poster(export_mode=True):
-    """Create the full UP 2050 poster.
-    
-    Args:
-        export_mode: If True, render all components in static final-state mode.
-    
-    Returns:
-        matplotlib.figure.Figure: The assembled poster figure.
-    """
-    # Create canvas
+    """Create the full UP 2050 poster."""
     fig = Figure(figsize=(POSTER_WIDTH, POSTER_HEIGHT), dpi=POSTER_DPI)
     fig.patch.set_facecolor(CHARCOAL_NIGHT)
-    
-    # 6-zone GridSpec layout — tuned ratios for visual balance
-    # Override palette defaults for better pyramid visibility
-    tuned_ratios = [0.175, 0.155, 0.145, 0.200, 0.145, 0.180]
+
+    # Increased spacing between zones to prevent overlap
+    tuned_ratios = [0.16, 0.14, 0.16, 0.20, 0.14, 0.20]
     gs = GridSpec(
         6, 1, figure=fig,
         height_ratios=tuned_ratios,
-        hspace=0.02
+        hspace=0.08,          # was 0.02 — this was causing overlap
+        top=0.98,
+        bottom=0.02,
+        left=0.02,
+        right=0.98,
     )
-    
-    # Load all data
-    projections = load_projections()
-    demographics = load_demographics()
+
+    projections   = load_projections()
+    demographics  = load_demographics()
     infrastructure = load_infrastructure()
-    
-    # === Zone 1: Hero Band ===
+
     ax_hero = fig.add_subplot(gs[0])
     render_hero(
         ax_hero,
@@ -56,25 +49,20 @@ def create_poster(export_mode=True):
         subtext='240 Million Dreams · 1 River · Infinite Potential',
         export_mode=export_mode
     )
-    
-    # === Zone 2: Skyline Strip ===
+
     ax_skyline = fig.add_subplot(gs[1])
     render_skyline(ax_skyline, export_mode=export_mode)
-    
-    # === Zone 3: Data Row (4 Metric Cards) ===
+
     ax_data = fig.add_subplot(gs[2])
     render_data_pulse(ax_data, projections['metrics'], export_mode=export_mode)
-    
-    # === Zone 4: Infrastructure Map ===
+
     ax_map = fig.add_subplot(gs[3])
     render_infra_map(ax_map, infrastructure, export_mode=export_mode)
-    
-    # === Zone 5: Cultural Footer ===
+
     ax_culture = fig.add_subplot(gs[4])
     render_cultural(ax_culture, export_mode=export_mode)
-    
-    # === Zone 6: Demographic Pyramid / Caption Bar ===
+
     ax_pyramid = fig.add_subplot(gs[5])
     render_pyramid(ax_pyramid, demographics, export_mode=export_mode)
-    
+
     return fig

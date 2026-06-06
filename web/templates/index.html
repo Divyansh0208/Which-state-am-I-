@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Which State Am I? — 2050</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Rajdhani:wght@400;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+    <div class="stars"></div>
+
+    <header>
+        <p class="eyebrow">Hack2Skill × Google for Developers</p>
+        <h1>Which State Am I?</h1>
+        <p class="tagline">Fast Forward to <span class="accent">2050</span></p>
+    </header>
+
+    <main>
+        {% if poster_ready %}
+        <div class="poster-wrap">
+            <img src="/preview"
+                alt="Data-driven visual poster encoding India's most populous state in 2050 without naming it"
+                class="poster-img" />
+        </div>
+
+        <div class="actions">
+            <a href="/download" class="btn btn-primary" download>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download Poster (PNG)
+            </a>
+            <button class="btn btn-ghost" onclick="regenerate()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10" />
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                </svg>
+                Regenerate
+            </button>
+        </div>
+
+        <div id="regen-status" class="status hidden"></div>
+
+        {% else %}
+        <div class="no-poster">
+            <p>Poster not generated yet.</p>
+            <button class="btn btn-primary" onclick="regenerate()">Generate Now</button>
+            <div id="regen-status" class="status hidden"></div>
+        </div>
+        {% endif %}
+
+        <section class="clues">
+            <h2>Visual Clues Encoded</h2>
+            <div class="clue-grid">
+                <div class="clue">🕌 Rumi Darwaza + Kashi Spire</div>
+                <div class="clue">🌊 Ganga Curve</div>
+                <div class="clue">🏛 Taj Silhouette</div>
+                <div class="clue">🛣 Expressway Network</div>
+                <div class="clue">🧵 Banarasi Border</div>
+                <div class="clue">✈ 5 Airport Dots</div>
+            </div>
+            <p class="compliance-note">⚠ State name never appears anywhere on this page or the poster.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built for <strong>Hack2Skill × Google for Developers</strong> — Mini Challenge 2</p>
+        <p>Stack: Python · Matplotlib · Pillow · Flask</p>
+    </footer>
+
+    <script>
+        async function regenerate() {
+            const status = document.getElementById('regen-status');
+            status.textContent = '⏳ Generating poster…';
+            status.className = 'status';
+            try {
+                const res = await fetch('/generate', { method: 'POST' });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    status.textContent = '✅ Done! Refreshing…';
+                    setTimeout(() => location.reload(), 1200);
+                } else {
+                    status.textContent = '❌ Error: ' + data.msg;
+                    status.classList.add('error');
+                }
+            } catch (e) {
+                status.textContent = '❌ Request failed.';
+                status.classList.add('error');
+            }
+        }
+    </script>
+</body>
+
+</html>

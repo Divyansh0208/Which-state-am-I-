@@ -10,10 +10,6 @@ ENV/
 env.bak/
 venv.bak/
 
-# Generated files
-MysteryState2050_Poster.png
-*.png
-
 # IDE / Editor
 .vscode/
 .idea/
